@@ -26,7 +26,7 @@ del temp.csv temp.out.csv
 echo Generating WAV files...
 for %%a in ("%~1") do (
 echo Writing file: %~dp0output\%%~na.wav
-vlc.exe %~dp0output\%%~na.tmp.mid --sout "#transcode{acodec=s16l,ab=128}:std{access=file,mux=wav,dst=%~dp0output\%%~na.wav} vlc://quit"
+vlc.exe %~dp0output\%%~na.tmp.mid --no-repeat --sout "#transcode{acodec=s16l,ab=128}:std{access=file,mux=wav,dst=%~dp0output\%%~na.wav} vlc://quit"
 del %~dp0output\%%~na.tmp.mid
 )
 
