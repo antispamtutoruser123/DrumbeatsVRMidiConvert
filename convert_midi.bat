@@ -1,4 +1,4 @@
-:: V1.38
+:: V1.37
 :: Converts general midi file to drumbeats VR midi
 :: Requires perl (strawberryperl.com) 
 :: Uses csv2midi (https://www.fourmilab.ch/webtools/midicsv/) 
@@ -10,30 +10,30 @@ IF %1.==. GOTO No1
 :: IF %2.==. GOTO No1
 
 for %%a in ("%~1") do (
-.\Midicsv\Midicsv.exe %%a > temp.csv
+%~dp0Midicsv\Midicsv.exe %%a > temp.csv
 
-perl .\scripts\newtempo.pl temp.csv > newtempo.csv
-.\Midicsv\Csvmidi.exe newtempo.csv > .\output\%%~na.tmp.mid
+perl %~dp0scripts\newtempo.pl temp.csv > newtempo.csv
+%~dp0Midicsv\Csvmidi.exe newtempo.csv > %~dp0output\%%~na.tmp.mid
 del newtempo.csv 
 
-perl .\scripts\midcsv2dbcsv.pl temp.csv > temp.out.csv
-echo Writing file: .\output\%%~na.mid
-.\Midicsv\Csvmidi.exe temp.out.csv > .\output\%%~na.mid
+perl %~dp0scripts\midcsv2dbcsv.pl temp.csv > temp.out.csv
+echo Writing file: %~dp0output\%%~na.mid
+%~dp0Midicsv\Csvmidi.exe temp.out.csv > %~dp0output\%%~na.mid
 del temp.csv temp.out.csv
 )
 
 
-echo Generating MP3 files...
+echo Generating WAV files...
 for %%a in ("%~1") do (
-echo Writing file: .\output\%%~na.mp3
-vlc.exe .\output\%%~na.tmp.mid --sout "#transcode{acodec=mp3,ab=128}:std{access=file,mux=dummy,dst=.\output\%%~na.mp3} vlc://quit"
-del .\output\%%~na.tmp.mid
+echo Writing file: %~dp0output\%%~na.wav
+vlc.exe %~dp0output\%%~na.tmp.mid --no-repeat --sout "#transcode{acodec=s16l,ab=128}:std{access=file,mux=wav,dst=%~dp0output\%%~na.wav} vlc://quit"
+del %~dp0output\%%~na.tmp.mid
 )
 
 
 echo Removing duplicate hi-hats...
 for %%a in ("%~1") do (
-call .\scripts\remove_duplicates.bat .\output\%%~na.mid
+call %~dp0scripts\remove_duplicates.bat %~dp0output\%%~na.mid
 )
 
 GOTO End1
